@@ -1,0 +1,13 @@
+#login, #loggedin {
+    display: none;
+}
+
+#track-list {
+    list-style: none;
+}
+
+#dl-playlist, #tracks {
+    height: 90vh;
+    width: 30vh;
+    overflow: scroll;
+}
