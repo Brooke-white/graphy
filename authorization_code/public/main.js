@@ -308,7 +308,6 @@ var library = new function () {
         this.audio_features_url = '';
         this.count = 0;
 
-
     };
 
     this.clearLibraryVars = function () {
@@ -356,9 +355,6 @@ var library = new function () {
                             }, 0) / library.tracks.length);
                     }
                     mu[2] = millisToMin(mu[2]);
-                    console.log("csll");
-                    var res = "";
-
                     makePolarAreaGraph(mu, library.labels, library.graphId);
                 }
             },
@@ -476,6 +472,7 @@ var library = new function () {
     // onclick
     this.getLibrary = function () {
         $(library.buttonId).show();
+        $(playlists.trackHolder).show();
         $('#track-list').empty();
         $('#playlists').empty();
         clearGraph('graph');
@@ -543,8 +540,6 @@ var library = new function () {
         $(w.document.body).html(page);
 
     };
-
-
 };
 
 function millisToMin(millis) {
