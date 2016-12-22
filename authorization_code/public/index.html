@@ -8,8 +8,10 @@
 
 <body>
 <div class="container">
-    <div id="login">
-        <h1>Please log in</h1>
+    <div id="login" class="jumbotron">
+        <h1 class="display-3">Graphy</h1>
+        <p class="lead">Visualize your listening habits on Spotify</p>
+        <hr class="my-2">
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
     </div>
     <div id="loggedin">
@@ -62,6 +64,11 @@
 </script>
 
 <script id="library-template" type="text/x-handlebars-template">
+    <div>
+        <button type="button" class="btn btn-success" id="a" onclick="library.getDataSet()">
+            <span class="glyphicon glyphicon-stats"></span> Raw Data
+        </button>
+    </div>
     <ul class="nav nav-pills nav-stacked">
         <button style="display: none;" type="button" class="btn btn-success active" id=-1 onclick="library.getTrack(this)">All tracks</button>
         {{#each}}
