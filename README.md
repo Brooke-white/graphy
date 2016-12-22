@@ -1,5 +1,6 @@
 # Graphy
 Graphs [audio features](https://developer.spotify.com/web-api/get-audio-features/) for individual tracks, playlists, and a user's entire Spotify library.
+A data set containing all the songs in a users library can be viewed.
 
 ## Requirements
 [Node.js](https://nodejs.org/download/)
