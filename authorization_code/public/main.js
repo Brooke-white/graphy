@@ -4,10 +4,12 @@ var playlists = new function() {
     this.access_token = '';
     this.audio_features_url = '';
     this.count = 0;
-    this.features = ['acousticness', 'danceability', 'duration_ms', 'energy', 'instrumentalness', 'key', 'liveness',
-        'loudness', 'mode', 'speechiness', 'tempo', 'time_signature', 'valence'];
-    this.labels = ['acousticness', 'danceability', 'duration_min', 'energy', 'instrumentalness', 'key', 'liveness',
-        'loudness', 'mode', 'speechiness', 'tempo', 'time_signature', 'valence'];
+    this.features = ['acousticness', 'danceability', 'duration_ms', 'energy',
+        'instrumentalness', 'key', 'liveness', 'loudness', 'mode',
+        'speechiness', 'tempo', 'time_signature', 'valence'];
+    this.labels = ['acousticness', 'danceability', 'duration_min', 'energy',
+        'instrumentalness', 'key', 'liveness', 'loudness', 'mode',
+        'speechiness', 'tempo', 'time_signature', 'valence'];
     this.graphId = '';
     this.buttonId = '';
     this.userId = '';
@@ -18,7 +20,8 @@ var playlists = new function() {
     this.trackHolder = '';
     this.trackList = '';
 
-    this.init  = function (userId, access_token, buttonId, graphId, pPlaceholder, pTemplate, tPlaceholder, tTemplate,
+    this.init  = function (userId, access_token, buttonId, graphId,
+                           pPlaceholder, pTemplate, tPlaceholder, tTemplate,
                            tHolder, tList) {
         this.userId = userId;
         this.access_token = access_token;
@@ -37,7 +40,8 @@ var playlists = new function() {
 
     this.main = function () {
         $.ajax({
-            url: "https://api.spotify.com/v1/users/" + playlists.userId + "/playlists",
+            url: "https://api.spotify.com/v1/users/" + playlists.userId +
+            "/playlists",
             headers: {
                 Authorization: "Bearer " + playlists.access_token
             },
@@ -45,7 +49,8 @@ var playlists = new function() {
             type: "GET",
             success: function (data) {
                 // generate playlist buttons
-                playlists.playlistPlaceholder.innerHTML = playlists.playlistTemplate(data.items);
+                playlists.playlistPlaceholder.innerHTML =
+                    playlists.playlistTemplate(data.items);
 
                 for (var i=0; i < data.items.length; ++i) {
                     // create on click action for each button generated
@@ -69,14 +74,17 @@ var playlists = new function() {
 
                             // if more than two buttons are active, FIFO
                             if (playlists.clickedButtonsQueue.length > 1    ) {
-                                $(playlists.clickedButtonsQueue.shift()).attr('class', 'btn btn-primary');
+                                $(playlists.clickedButtonsQueue.shift()).attr(
+                                    'class', 'btn btn-primary');
                             }
 
 
                             $.ajax({
-                                url: "https://api.spotify.com/v1/users/" + playlists.userId + "/playlists/" +
+                                url: "https://api.spotify.com/v1/users/" +
+                                playlists.userId + "/playlists/" +
                                 data.items[i].id + "/tracks",
-                                headers: {Authorization: "Bearer " + playlists.access_token},
+                                headers: {Authorization: "Bearer " +
+                                playlists.access_token},
                                 accepts: "application/json",
                                 type: "GET",
                                 success: function (playlistData) {
@@ -142,7 +150,8 @@ var playlists = new function() {
                     var mu = [];
 
                     for (var i=0; i < playlists.features.length; ++i) {
-                        mu.push(playlists.tracks[playlists.features[i]].reduce(function (a, b) {
+                        mu.push(playlists.tracks[playlists.features[i]].reduce(
+                                function (a, b) {
                                 return a + b;
                             }, 0) / playlists.tracks.length);
                     }
@@ -172,13 +181,15 @@ var playlists = new function() {
                     for (var i = 0; i < data.items.length; ++i) {
                         playlists.setTrackInfo(data, i);
                     }
-                    playlists.getAudioFeatures(playlists.audio_features_url, preCount);
+                    playlists.getAudioFeatures(playlists.audio_features_url,
+                        preCount);
                     playlists.getPlaylistRecursive(data);
                 },
                 error: function (data) {
                     alert("ERROR");
                     if (data.next) {
-                        $(playlists.trackHolder).append("<h3>Error retrieving playlist</h3>");
+                        $(playlists.trackHolder).append(
+                            "<h3>Error retrieving playlist</h3>");
                     }
                 }
             });
@@ -186,7 +197,8 @@ var playlists = new function() {
         else {
             $(playlists.buttonId).hide();
 
-            playlists.trackPlaceholder.innerHTML = playlists.trackTemplate(playlists.tracks);
+            playlists.trackPlaceholder.innerHTML = playlists.trackTemplate(
+                playlists.tracks);
 
             $('#track-back').on('click', function() {
                 $(playlists.trackHolder).hide();
@@ -194,7 +206,8 @@ var playlists = new function() {
                 $(playlists.buttonId).show();
 
                 for (var i=0; i < playlists.clickedButtonsQueue.length; ++i) {
-                    $(playlists.clickedButtonsQueue.pop()).attr('class', 'btn btn-primary');
+                    $(playlists.clickedButtonsQueue.pop()).attr(
+                        'class', 'btn btn-primary');
                 }
 
 
@@ -214,19 +227,32 @@ var playlists = new function() {
     };
 
     this.setAudioFeatures = function (data, index) {
-        playlists.tracks.danceability.push( data.audio_features[index].danceability);
-        playlists.tracks.energy.push( data.audio_features[index].energy);
-        playlists.tracks.key.push( data.audio_features[index].key);
-        playlists.tracks.loudness.push( data.audio_features[index].loudness);
-        playlists.tracks.mode.push( data.audio_features[index].mode);
-        playlists.tracks.speechiness.push( data.audio_features[index].speechiness);
-        playlists.tracks.acousticness.push( data.audio_features[index].acousticness);
-        playlists.tracks.instrumentalness.push( data.audio_features[index].instrumentalness);
-        playlists.tracks.liveness.push( data.audio_features[index].liveness);
-        playlists.tracks.valence.push( data.audio_features[index].valence);
-        playlists.tracks.tempo.push( data.audio_features[index].tempo);
-        playlists.tracks.duration_ms.push( data.audio_features[index].duration_ms);
-        playlists.tracks.time_signature.push( data.audio_features[index].time_signature);
+        playlists.tracks.danceability.push(
+            data.audio_features[index].danceability);
+        playlists.tracks.energy.push(
+            data.audio_features[index].energy);
+        playlists.tracks.key.push(
+            data.audio_features[index].key);
+        playlists.tracks.loudness.push(
+            data.audio_features[index].loudness);
+        playlists.tracks.mode.push(
+            data.audio_features[index].mode);
+        playlists.tracks.speechiness.push(
+            data.audio_features[index].speechiness);
+        playlists.tracks.acousticness.push(
+            data.audio_features[index].acousticness);
+        playlists.tracks.instrumentalness.push(
+            data.audio_features[index].instrumentalness);
+        playlists.tracks.liveness.push(
+            data.audio_features[index].liveness);
+        playlists.tracks.valence.push(
+            data.audio_features[index].valence);
+        playlists.tracks.tempo.push(
+            data.audio_features[index].tempo);
+        playlists.tracks.duration_ms.push(
+            data.audio_features[index].duration_ms);
+        playlists.tracks.time_signature.push(
+            data.audio_features[index].time_signature);
     };
 
     // onclick
@@ -257,10 +283,12 @@ var library = new function () {
     this.access_token = '';
     this.audio_features_url = '';
     this.count = 0;
-    this.features = ['acousticness', 'danceability', 'duration_ms', 'energy', 'instrumentalness', 'key', 'liveness',
-        'loudness', 'mode', 'speechiness', 'tempo', 'time_signature', 'valence', 'popularity'];
-    this.labels = ['acousticness', 'danceability', 'duration_min', 'energy', 'instrumentalness', 'key', 'liveness',
-        'loudness', 'mode', 'speechiness', 'tempo', 'time_signature', 'valence', 'popularity'];
+    this.features = ['acousticness', 'danceability', 'duration_ms', 'energy',
+        'instrumentalness', 'key', 'liveness', 'loudness', 'mode',
+        'speechiness', 'tempo', 'time_signature', 'valence', 'popularity'];
+    this.labels = ['acousticness', 'danceability', 'duration_min', 'energy',
+        'instrumentalness', 'key', 'liveness', 'loudness', 'mode',
+        'speechiness', 'tempo', 'time_signature', 'valence', 'popularity'];
     this.graphId = '';
     this.userId = '';
     this.trackPlaceholder = '';
@@ -268,7 +296,8 @@ var library = new function () {
     this.trackHolder = '';
     this.trackList = '';
 
-    this.init = function (userId, access_token, graphId, tPlaceholder, tTemplate, tHolder, tList) {
+    this.init = function (userId, access_token, graphId,
+                          tPlaceholder, tTemplate, tHolder, tList) {
         this.userId = userId;
         this.access_token = access_token;
         this.graphId = graphId;
@@ -276,7 +305,7 @@ var library = new function () {
         this.trackTemplate = tTemplate;
         this.trackHolder = tHolder;
         this.trackList = tList;
-        this.audio_features_url = ''; //"https://api.spotify.com/v1/audio-features/?ids="
+        this.audio_features_url = '';
         this.count = 0;
 
 
@@ -321,12 +350,15 @@ var library = new function () {
                     var mu = [];
 
                     for (var i=0; i < library.features.length; ++i) {
-                        mu.push(library.tracks[library.features[i]].reduce(function (a, b) {
+                        mu.push(library.tracks[library.features[i]].reduce(
+                                function (a, b) {
                                 return a + b;
                             }, 0) / library.tracks.length);
                     }
                     mu[2] = millisToMin(mu[2]);
                     console.log("csll");
+                    var res = "";
+
                     makePolarAreaGraph(mu, library.labels, library.graphId);
                 }
             },
@@ -337,39 +369,55 @@ var library = new function () {
     };
 
     this.setAudioFeatures = function (data, index) {
-        library.tracks.danceability.push( data.audio_features[index].danceability);
-        library.tracks.energy.push( data.audio_features[index].energy);
-        library.tracks.key.push( data.audio_features[index].key);
-        library.tracks.loudness.push( data.audio_features[index].loudness);
-        library.tracks.mode.push( data.audio_features[index].mode);
-        library.tracks.speechiness.push( data.audio_features[index].speechiness);
-        library.tracks.acousticness.push( data.audio_features[index].acousticness);
-        library.tracks.instrumentalness.push( data.audio_features[index].instrumentalness);
-        library.tracks.liveness.push( data.audio_features[index].liveness);
-        library.tracks.valence.push( data.audio_features[index].valence);
-        library.tracks.tempo.push( data.audio_features[index].tempo);
-        library.tracks.duration_ms.push( data.audio_features[index].duration_ms);
-        library.tracks.time_signature.push( data.audio_features[index].time_signature);
+        library.tracks.danceability.push(
+            data.audio_features[index].danceability);
+        library.tracks.energy.push(
+            data.audio_features[index].energy);
+        library.tracks.key.push(
+            data.audio_features[index].key);
+        library.tracks.loudness.push(
+            data.audio_features[index].loudness);
+        library.tracks.mode.push(
+            data.audio_features[index].mode);
+        library.tracks.speechiness.push(
+            data.audio_features[index].speechiness);
+        library.tracks.acousticness.push(
+            data.audio_features[index].acousticness);
+        library.tracks.instrumentalness.push(
+            data.audio_features[index].instrumentalness);
+        library.tracks.liveness.push(
+            data.audio_features[index].liveness);
+        library.tracks.valence.push(
+            data.audio_features[index].valence);
+        library.tracks.tempo.push(
+            data.audio_features[index].tempo);
+        library.tracks.duration_ms.push(
+            data.audio_features[index].duration_ms);
+        library.tracks.time_signature.push(
+            data.audio_features[index].time_signature);
     };
 
     this.getTrackRecursive = function (data) {
         if (data.next) {
             $.ajax({
-                url: "https://api.spotify.com/v1/me/tracks?offset="+ library.tracks.length +"&limit=50",
+                url: "https://api.spotify.com/v1/me/tracks?offset="+
+                library.tracks.length +"&limit=50",
                 headers: {
                     Authorization: "Bearer " + library.access_token
                 },
                 accepts: "application/json",
                 type: "GET",
                 success: function (data) {
-                    library.audio_features_url = "https://api.spotify.com/v1/audio-features/?ids=";
+                    library.audio_features_url =
+                        "https://api.spotify.com/v1/audio-features/?ids=";
                     var preCount = library.count;
 
                     // for each track (returned in increments of 50)
                     for (var i=0; i < data.items.length; ++i) {
                         library.setTrackInfo(data, i);
                     }
-                    library.getAudioFeatures(library.audio_features_url, preCount);
+                    library.getAudioFeatures(library.audio_features_url,
+                        preCount);
 
                     library.getTrackRecursive(data);
                 },
@@ -379,7 +427,8 @@ var library = new function () {
             });
         }
         else {
-            library.trackPlaceholder.innerHTML = library.trackTemplate(library.tracks);
+            library.trackPlaceholder.innerHTML = library.trackTemplate(
+                library.tracks);
         }
     };
 
@@ -452,14 +501,49 @@ var library = new function () {
         else {
             $("#-1").css('display', 'none');
             for (var i=0; i < library.features.length; ++i) {
-                idValues.push(library.tracks[library.features[i]].reduce(function (a, b) {
-                        return a + b;
+                idValues.push(library.tracks[library.features[i]].reduce(
+                        function (a, b) { return a + b;
                     }, 0) / library.tracks.length);
             }
         }
         idValues[2] = millisToMin(idValues[2]);
         makePolarAreaGraph(idValues, library.labels, library.graphId);
     };
+
+    this.getDataSet = function () {
+        var res = "[";
+        for (var it = 0; it < library.count; ++it) {
+                    res +=
+                        "[\"" + library.tracks[it].title + "\", " +
+                           "\"" + library.tracks[it].artist + "\", " +
+                            library.tracks.danceability[it] + ", " +
+                            library.tracks.energy[it] + ", " +
+                            library.tracks.key[it] + ", " +
+                            library.tracks.loudness[it] + ", " +
+                            library.tracks.mode[it] + ", " +
+                            library.tracks.speechiness[it] + ", " +
+                            library.tracks.acousticness[it] + ", " +
+                            library.tracks.instrumentalness[it] + ", " +
+                            library.tracks.liveness[it] + ", " +
+                            library.tracks.valence[it] + ", " +
+                            library.tracks.tempo[it] + ", " +
+                            library.tracks.duration_ms[it] + ", " +
+                            library.tracks.time_signature[it] + ", " +
+                            library.tracks.popularity[it] + "],";
+                }
+        res = res.slice(0, -1) + ']';
+        var w = window.open();
+
+        var page = "<html>" +
+        "<head>" +
+        "   <title>Library Data Set</title>" +
+        "</head>" +
+        "<body><div>" + res + "</div></body></html>";
+
+        $(w.document.body).html(page);
+
+    };
+
 
 };
 
@@ -471,7 +555,8 @@ function millisToMin(millis) {
 
 function clearGraph(id) {
     $('#' + id).remove();
-    $('#canvas-column').append('<canvas id="'+ id + '" class="pull-right"></canvas>');
+    $('#canvas-column').append(
+        '<canvas id="'+ id + '" class="pull-right"></canvas>');
 
 }
 
